@@ -1,17 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts@4.9.0/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts@4.9.0/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts@4.9.0/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts@4.9.0/security/Pausable.sol";
-import "@openzeppelin/contracts@4.9.0/access/Ownable.sol";
-import "@openzeppelin/contracts@4.9.0/token/ERC721/extensions/ERC721Burnable.sol";
-import "@openzeppelin/contracts@4.9.0/utils/cryptography/draft-EIP712.sol";
-import "@openzeppelin/contracts@4.9.0/token/ERC721/extensions/draft-ERC721Votes.sol";
-import "@openzeppelin/contracts@4.9.0/utils/Counters.sol";
+import "@openzeppelin/contracts@4.8.3/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts@4.8.3/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts@4.8.3/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts@4.8.3/access/Ownable.sol";
+import "@openzeppelin/contracts@4.8.3/utils/Counters.sol";
 
-contract ERC721NFT is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable, ERC721Burnable, EIP712, ERC721Votes {
+contract ERC721SBT is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -21,14 +17,6 @@ contract ERC721NFT is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
         ERC721(myName, mySymbol)
     {}
 
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
-    }
-
     function safeMint(address to, string memory uri) public onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
@@ -36,22 +24,7 @@ contract ERC721NFT is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
         _setTokenURI(tokenId, uri);
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
-        internal
-        whenNotPaused
-        override(ERC721, ERC721Enumerable)
-    {
-        super._beforeTokenTransfer(from, to, tokenId, batchSize);
-    }
-
     // The following functions are overrides required by Solidity.
-
-    function _afterTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
-        internal
-        override(ERC721, ERC721Votes)
-    {
-        super._afterTokenTransfer(from, to, tokenId, batchSize);
-    }
 
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
@@ -66,12 +39,11 @@ contract ERC721NFT is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
         return super.tokenURI(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721Enumerable, ERC721URIStorage)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
+    /**
+     * @dev See {IERC721-transferFrom}. Override and include onlyOwner modifier to
+     * disallow transferring of SBT token out by token holder except for contract owner
+     */
+    function transferFrom(address from, address to, uint256 tokenId) public onlyOwner override { 
+        _transfer(from, to, tokenId);
     }
 }
