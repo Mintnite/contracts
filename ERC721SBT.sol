@@ -7,7 +7,7 @@ import "@openzeppelin/contracts@4.8.3/token/ERC721/extensions/ERC721Burnable.sol
 import "@openzeppelin/contracts@4.8.3/access/Ownable.sol";
 import "@openzeppelin/contracts@4.8.3/utils/Counters.sol";
 
-contract ERC721SBT ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
+contract ERC721SBT is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
