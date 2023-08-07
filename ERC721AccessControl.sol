@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // The difference between this contract and the standard ERC721 is contract owner and other 
-// authorized accounts can burn anyone's tokens for the sake of coupon redemption.
+// authorized accounts can burn anyone's tokens.
 pragma solidity ^0.8.9;
 
 import "./Authorizable.sol";
