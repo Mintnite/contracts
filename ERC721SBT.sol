@@ -23,6 +23,28 @@ contract ERC721SBT is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
+	
+	// Mint bulk NFTs for multiple addresses with one token URIs
+    function safeMintOneToMany(address[] memory tos, string memory uri) public onlyOwner {
+        uint i = 0;
+        for(i; i < tos.length; i++) {
+            uint256 tokenId = _tokenIdCounter.current();
+            _tokenIdCounter.increment();
+            _safeMint(tos[i], tokenId);
+            _setTokenURI(tokenId, uri);
+        }
+    }
+
+    // Mint bulk NFTs for multiple addresses with multiple token URIs
+    function safeMintManyToMany(address[] memory tos, string[] memory uris) public onlyOwner {
+        uint i = 0;
+        for(i; i < tos.length; i++) {
+            uint256 tokenId = _tokenIdCounter.current();
+            _tokenIdCounter.increment();
+            _safeMint(tos[i], tokenId);
+            _setTokenURI(tokenId, uris[i]);
+        }
+    }
 
     // The following functions are overrides required by Solidity.
 
